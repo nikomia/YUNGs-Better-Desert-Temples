@@ -46,10 +46,7 @@ public class PharaohUtil {
     public static boolean isPharaoh(CompoundTag mobNbt, RegistryAccess registryAccess) {
         if (!mobNbt.getStringOr("id", "").equals("minecraft:husk")) return false;
 
-        ListTag armorItems = mobNbt.getListOrEmpty("ArmorItems");
-        if (armorItems.size() != 4) return false;
-
-        CompoundTag helmetTag = armorItems.getCompoundOrEmpty(3);
+        CompoundTag helmetTag = mobNbt.getCompoundOrEmpty("equipment").getCompoundOrEmpty("head");
         ItemStack helmetItemStack = ItemStack.OPTIONAL_CODEC.parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), helmetTag)
                 .result().orElse(ItemStack.EMPTY);
         if (!helmetItemStack.is(Items.PLAYER_HEAD)) return false;
