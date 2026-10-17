@@ -21,4 +21,4 @@ plugins {
 }
 
 rootProject.name = 'betterdeserttemples'
-include("Common", "Fabric", "NeoForge")
+include("Common", "NeoForge")

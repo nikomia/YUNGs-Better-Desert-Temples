@@ -1,5 +1,6 @@
 package com.yungnickyoung.minecraft.betterdeserttemples.world.processor;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.mojang.serialization.MapCodec;
 import com.yungnickyoung.minecraft.betterdeserttemples.module.StructureProcessorModule;
 import com.yungnickyoung.minecraft.yungsapi.world.spawner.MobSpawnerData;
@@ -11,7 +12,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,7 +21,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 
 
-public class GravelProcessor extends StructureProcessor {
+public class GravelProcessor implements StructureProcessor {
     public static final GravelProcessor INSTANCE = new GravelProcessor();
     public static final MapCodec<GravelProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
 
@@ -29,12 +29,12 @@ public class GravelProcessor extends StructureProcessor {
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader,
                                                              BlockPos jigsawPiecePos,
                                                              BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.StructureBlockInfo blockInfoLocal,
+                                                             BlockPos templateRelativePos,
                                                              StructureTemplate.StructureBlockInfo blockInfoGlobal,
                                                              StructurePlaceSettings structurePlacementData) {
         if (blockInfoGlobal.state().getBlock() == Blocks.GRAVEL) {
             MobSpawnerData spawnerData = MobSpawnerData.builder()
-                    .setEntityType(EntityType.HUSK)
+                    .setEntityType(EntityTypes.HUSK)
                     .maxNearbyEntities(8)
                     .requiredPlayerRange(24)
                     .build();
@@ -44,7 +44,8 @@ public class GravelProcessor extends StructureProcessor {
         return blockInfoGlobal;
     }
 
-    protected StructureProcessorType<?> getType() {
+    @Override
+    public MapCodec<? extends StructureProcessor> codec() {
         return StructureProcessorModule.GRAVEL_PROCESSOR;
     }
 }
