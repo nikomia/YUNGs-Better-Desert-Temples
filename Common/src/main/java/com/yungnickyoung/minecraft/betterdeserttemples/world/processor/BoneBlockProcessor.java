@@ -5,10 +5,8 @@ import com.mojang.serialization.MapCodec;
 import com.yungnickyoung.minecraft.betterdeserttemples.module.StructureProcessorModule;
 import com.yungnickyoung.minecraft.yungsapi.world.spawner.MobSpawnerData;
 
-import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
@@ -39,8 +37,8 @@ public class BoneBlockProcessor implements StructureProcessor {
                     .setEntityType(EntityTypes.SKELETON)
                     .requiredPlayerRange(32)
                     .build();
-            spawnerData.nextSpawnData.getEntityToSpawn().put("HandItems", Util.make(new ListTag(), (handItemsTag) -> {
-            }));
+            // Любое поле кроме id отключает стандартное снаряжение моба — скелеты без луков
+            spawnerData.nextSpawnData.getEntityToSpawn().put("equipment", new CompoundTag());
             CompoundTag nbt = spawnerData.save();
             blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), Blocks.SPAWNER.defaultBlockState(), nbt);
         }
