@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.yungnickyoung.minecraft.betterdeserttemples.mixin.accessor.ChunkGeneratorStructureStateAccessor;
-import com.yungnickyoung.minecraft.betterdeserttemples.module.StructurePlacementTypeModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.Vec3i;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.ExtraCodecs;
@@ -15,7 +15,6 @@ import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
-import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 
 import java.util.Optional;
 
@@ -57,8 +56,8 @@ public class BetterDesertTemplePlacement extends RandomSpreadStructurePlacement 
                     structurePos.getX(), structurePos.getY(), structurePos.getZ(),
                     48, 2,
                     biomeHolder -> biomeHolder.is(BiomeTags.IS_RIVER) || biomeHolder.is(BiomeTags.IS_OCEAN),
-                    randomState.oreRandom().at(structurePos), true,
-                    randomState.sampler()
+                    randomState.getOrCreateRandomFactory(Identifier.withDefaultNamespace("ore")).at(structurePos), true,
+                    randomState
             ) != null;
             return !isOceanOrRiverNear;
         }
@@ -66,7 +65,8 @@ public class BetterDesertTemplePlacement extends RandomSpreadStructurePlacement 
     }
 
     @Override
-    public StructurePlacementType<?> type() {
-        return StructurePlacementTypeModule.BETTER_DESERT_TEMPLE_PLACEMENT;
+    @SuppressWarnings("unchecked")
+    public MapCodec<RandomSpreadStructurePlacement> codec() {
+        return (MapCodec<RandomSpreadStructurePlacement>) (MapCodec<?>) CODEC;
     }
 }

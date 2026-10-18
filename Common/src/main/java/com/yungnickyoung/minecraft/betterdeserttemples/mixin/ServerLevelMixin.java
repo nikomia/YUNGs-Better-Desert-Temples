@@ -15,6 +15,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
+import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,17 +39,9 @@ public abstract class ServerLevelMixin extends Level implements ITempleStateCach
     }
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void betterdeserttemples_attachTempleStateManager(final MinecraftServer server,
-                                                              final Executor executor,
-                                                              final LevelStorageSource.LevelStorageAccess levelStorage,
-                                                              final ServerLevelData levelData,
-                                                              final ResourceKey<Level> dimension,
-                                                              final LevelStem levelStem,
-                                                              final boolean isDebug,
-                                                              final long biomeZoomSeed,
-                                                              final List<CustomSpawner> customSpawners,
-                                                              final boolean tickTime,
-                                                              final CallbackInfo ci) {
+    // Only the storage is captured: Youer's constructor takes extra Bukkit parameters
+    private void betterdeserttemples_attachTempleStateManager(final CallbackInfo ci,
+                                                              @Local(argsOnly = true) final LevelStorageSource.LevelStorageAccess levelStorage) {
         Path dimensionPath = levelStorage.getDimensionPath(this.dimension());
         this.templeStateCache = new TempleStateCache(dimensionPath);
     }
