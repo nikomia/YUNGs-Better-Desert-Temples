@@ -5,8 +5,6 @@ import com.yungnickyoung.minecraft.betterdeserttemples.module.StructureProcessor
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
@@ -24,6 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class PotProcessor implements StructureProcessor {
     public static final PotProcessor INSTANCE = new PotProcessor();
     public static final MapCodec<PotProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
+    private static final String[] SIDES = {"back", "left", "right", "front"};
 
     @Override
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader,
@@ -36,9 +35,11 @@ public class PotProcessor implements StructureProcessor {
             RandomSource randomSource = structurePlacementData.getRandom(blockInfoGlobal.pos());
 
             CompoundTag newNBT = blockInfoGlobal.nbt() == null ? new CompoundTag() : blockInfoGlobal.nbt();
-            ListTag sherds = new ListTag();
-            for (int i = 0; i < 4; i++) {
-                sherds.add(StringTag.valueOf(getRandomSherd(randomSource)));
+            // 26.3: sherds is a map back/left/right/front; brick is the default and is omitted
+            CompoundTag sherds = new CompoundTag();
+            for (String side : SIDES) {
+                String sherd = getRandomSherd(randomSource);
+                if (!sherd.equals("minecraft:brick")) sherds.putString(side, sherd);
             }
             newNBT.put("sherds", sherds);
             blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), Blocks.DECORATED_POT.defaultBlockState(), newNBT);
